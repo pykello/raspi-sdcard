@@ -1,4 +1,3 @@
-
 # tools
 AR = arm-none-eabi-ar
 AS = arm-none-eabi-as
@@ -15,18 +14,19 @@ CFLAGS = -mcpu=$(CPU) -gstabs -marm \
          -fno-builtin-exit -I.
 ASFLAGS = -mcpu=$(CPU) -g
 
-OBJS = startup.o main.o uart0.o sd.o printf.o mailbox.o
+OBJS = startup.o src/main.o src/uart0.o \
+	   src/sd.o src/printf.o src/mailbox.o
 
-raspi-kernel.img: $(OBJS) raspi.o linker.ld
-	arm-none-eabi-ld -Ttext 0x8000 -T linker.ld $(OBJS) raspi.o -o raspi-kernel.elf
+raspi-kernel.img: $(OBJS) src/raspi.o linker.ld
+	arm-none-eabi-ld -Ttext 0x8000 -T linker.ld $(OBJS) src/raspi.o -o raspi-kernel.elf
 	arm-none-eabi-objcopy -O binary raspi-kernel.elf raspi-kernel.img
 
-raspi2-qemu.img: $(OBJS) raspi2.o linker.ld
-	arm-none-eabi-ld -Ttext 0x10000 -T linker.ld $(OBJS) raspi2.o -o raspi2-qemu.elf
+raspi2-qemu.img: $(OBJS) src/raspi2.o linker.ld
+	arm-none-eabi-ld -Ttext 0x10000 -T linker.ld $(OBJS) src/raspi2.o -o raspi2-qemu.elf
 	arm-none-eabi-objcopy -O binary raspi2-qemu.elf raspi2-qemu.img
 
 qemu: raspi2-qemu.img
-	qemu-system-arm -M raspi2 -m 512M -nographic -sd sdcard.img -kernel raspi2-qemu.img
+	qemu-system-arm -M raspi2 -m 512M -nographic -sd tests/sdcard.img -kernel raspi2-qemu.img
 
 clean:
 	rm -f $(OBJS) raspi*.o *.elf *.bin raspi*.img
