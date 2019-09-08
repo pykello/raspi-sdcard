@@ -28,6 +28,13 @@ void PUT32(uint32_t addr, uint32_t val) {
 	(*(volatile uint32_t*) TranslateAddr(addr)) = val;
 }
 
+uint16_t GET16(uint32_t addr) {
+	return (*(volatile uint16_t*) TranslateAddr(addr));
+}
+void PUT16(uint32_t addr, uint16_t val) {
+	(*(volatile uint16_t*) TranslateAddr(addr)) = val;
+}
+
 
 void uart0_init(void) {
 	int ra;

@@ -96,6 +96,8 @@ struct emmc_block_dev
 extern unsigned int TranslateAddr(unsigned int addr);
 extern uint32_t GET32(uint32_t addr);
 extern void PUT32(uint32_t addr, uint32_t val);
+extern uint16_t GET16(uint32_t addr);
+extern void PUT16(uint32_t addr, uint16_t val);
 
 /* uart0 */
 extern void uart0_init(void);

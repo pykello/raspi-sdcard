@@ -145,6 +145,31 @@ static uint32_t capabilities_1 = 0;
 
 #define EMMC_DEBUG
 
+#define REGISTER_STRUCT(name) struct __attribute__((__packed__))  name
+
+
+/*
+ * SD Host Controller Spec v4.20, page 138,
+ * Cat. C, Offset 0FEh
+ */
+REGISTER_STRUCT(VersionRegister) {
+    enum {
+        SDHC_100 = 0x00,
+        SDHC_200 = 0x01,
+        SDHC_300 = 0x02,
+        SDHC_400 = 0x03,
+        SDHC_410 = 0x04,
+        SDHC_420 = 0x05
+    } specVersion : 8;
+    uint8_t vendorVersion;
+};
+#define VERSION_REGISTER_OFFSET 0xFE
+
+/*
+ * SD Host Controller Spec v4.20, page 137
+ */
+#define SLOT_INTERRUPT_STATUS_REGISTER_OFFSET 0xFC
+
 /*
  * SD Host Controller Spec v4.20, Page 76.
  * Cat. C, Offset 024h.
@@ -967,10 +992,10 @@ int sd_card_init(struct block_device **dev)
 	}
 
 	// Read the controller version
-	uint32_t ver = GET32(emmc_base + EMMC_SLOTISR_VER);
-	uint32_t vendor = ver >> 24;
-	uint32_t sdversion = (ver >> 16) & 0xff;
-	uint32_t slot_status = ver & 0xff;
+    uint32_t slot_status = GET16(emmc_base + SLOT_INTERRUPT_STATUS_REGISTER_OFFSET);
+    volatile struct VersionRegister *version = TranslateAddr(emmc_base + VERSION_REGISTER_OFFSET);
+	uint32_t vendor = version->vendorVersion;
+	uint32_t sdversion = version->specVersion;
 	uart0_printf("EMMC: vendor %x, sdversion %x, slot_status %x\n", vendor, sdversion, slot_status);
 	hci_ver = sdversion;
 

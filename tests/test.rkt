@@ -4,14 +4,19 @@
   (define qemu-output
     (run-qemu #:kernel kernel-path
               #:sdcard sdcard-image-path))
-  (define qemu-bytes (find-byte-sequence qemu-output))
-  (define image-bytes
-    (read-file-bytes sdcard-image-path (length qemu-bytes)))
-  (displayln
-   (if (equal? image-bytes qemu-bytes)
-       "Tests Passed!"
-       "Tests Failed!"))
+  (test "Check SDHC Version" (λ ()
+                               (string-contains? qemu-output
+                                                 "vendor 0x24, sdversion 0x1, slot_status 0x0")))
+  (test "Read Bytes" (λ ()
+                       (equal? (find-byte-sequence qemu-output)
+                               (read-file-bytes sdcard-image-path 512))))
   (exit 0))
+
+(define (test name f)
+  (display (string-append name " ... "))
+  (if (f)
+      (displayln "Passed")
+      (displayln "Failed")))
 
 (define (read-file-bytes path len)
   (define f (open-input-file path))
