@@ -11,10 +11,9 @@ void c_entry(void)
 	struct block_device *devptr = (struct block_device *) &dev;
 	uart0_init();
 
-	uart0_printf("Hello World %d\r\n", 12);
-
 	sd_card_init(&devptr);
 	uart0_printf("read %d bytes\n", sd_read(devptr, buf, 512, 0));
+	uart0_printf("BYTES: ");
 	for (int i = 0; i < 512; i++)
 		uart0_printf("%x ", buf[i]);
 	uart0_printf("\n");

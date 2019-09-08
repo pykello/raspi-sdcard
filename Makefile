@@ -28,5 +28,8 @@ raspi2-qemu.img: $(OBJS) src/raspi2.o linker.ld
 qemu: raspi2-qemu.img
 	qemu-system-arm -M raspi2 -m 512M -nographic -sd tests/sdcard.img -kernel raspi2-qemu.img
 
+test: raspi2-qemu.img
+	racket tests/test.rkt
+
 clean:
 	rm -f $(OBJS) raspi*.o *.elf *.bin raspi*.img
