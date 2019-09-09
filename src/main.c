@@ -9,6 +9,7 @@ void c_entry(void)
 	int i;
 	struct emmc_block_dev dev;
 	struct block_device *devptr = (struct block_device *) &dev;
+	wdog_start(0xFFFFF);
 	uart0_init();
 
 	sd_card_init(&devptr);
@@ -19,4 +20,14 @@ void c_entry(void)
 	uart0_printf("\n");
 
 	uart0_print("Bye!\r\n");
+	while(1)
+	{
+		unsigned int ra=wdog_get_remaining();
+		uart0_printf("ra: %d\n", ra);
+		if(ra<0xC2F6F) //4 seconds
+		{
+			uart0_printf("Wait for a reset\n");
+			break;
+		}
+	}
 }

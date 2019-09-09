@@ -1,5 +1,7 @@
 #lang racket
 
+(require "utils.rkt")
+
 (define (main)
   (define qemu-output
     (run-qemu #:kernel kernel-path
@@ -8,7 +10,7 @@
                                (string-contains? qemu-output
                                                  "vendor 0x24, sdversion 0x1, slot_status 0x0")))
   (test "Read Bytes" (λ ()
-                       (equal? (find-byte-sequence qemu-output)
+                       (equal? (find-byte-sequence qemu-output)                
                                (read-file-bytes sdcard-image-path 512))))
   (exit 0))
 
@@ -19,7 +21,7 @@
               "-kernel" kernel))
   (cond
     [(eq? (ctl 'status) 'done-error) (error (read-string 4096 stderr))]
-    [else (define output2 (read-until stdout "Bye!" 2000))
+    [else (define output2 (read-until stdout "Bye!" 4000))
           (exit-qemu stdin)
           (ctl 'wait)
           output2]))

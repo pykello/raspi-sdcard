@@ -15,7 +15,7 @@ CFLAGS = -mcpu=$(CPU) -gstabs -marm \
 ASFLAGS = -mcpu=$(CPU) -g
 
 OBJS = startup.o src/main.o src/uart0.o \
-	   src/sd.o src/printf.o src/mailbox.o
+	   src/sd.o src/printf.o src/mailbox.o src/wdog.o
 
 raspi-kernel.img: $(OBJS) src/raspi.o linker.ld
 	arm-none-eabi-ld -Ttext 0x8000 -T linker.ld $(OBJS) src/raspi.o -o raspi-kernel.elf
@@ -29,7 +29,7 @@ qemu: raspi2-qemu.img
 	qemu-system-arm -M raspi2 -m 512M -nographic -sd tests/sdcard.img -kernel raspi2-qemu.img
 
 test: raspi2-qemu.img
-	racket tests/test.rkt
+	racket tests/test-qemu.rkt
 
 clean:
 	rm -f $(OBJS) raspi*.o *.elf *.bin raspi*.img
