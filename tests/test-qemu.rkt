@@ -32,15 +32,4 @@
   (write-byte 120 stdin)
   (close-output-port stdin))
 
-(define tests-directory
-  (path-only (path->complete-path (find-system-path 'run-file))))
-
-(define sdcard-image-path
-  (path->string (build-path tests-directory "sdcard.img")))
-
-(define kernel-path
-  (path->string
-   (simplify-path
-    (build-path tests-directory 'up "raspi2-qemu.img"))))
-
 (main)

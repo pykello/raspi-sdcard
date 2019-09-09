@@ -53,3 +53,14 @@
   (if (f)
       (displayln "Passed")
       (displayln "Failed")))
+
+(define tests-directory
+  (path-only (path->complete-path (find-system-path 'run-file))))
+
+(define sdcard-image-path
+  (path->string (build-path tests-directory "sdcard.img")))
+
+(define kernel-path
+  (path->string
+   (simplify-path
+    (build-path tests-directory 'up "raspi2-qemu.img"))))
