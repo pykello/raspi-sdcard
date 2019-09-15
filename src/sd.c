@@ -13,7 +13,6 @@ static char driver_name[] = "emmc";
 static char device_name[] = "emmc0";	// We use a single device name as there is only
 					// one card slot in the RPi
 
-static uint32_t hci_ver = 0;
 static uint32_t capabilities_0 = 0;
 static uint32_t capabilities_1 = 0;
 
@@ -997,12 +996,6 @@ int sd_card_init(struct block_device **dev)
 	uint32_t vendor = version->vendorVersion;
 	uint32_t sdversion = version->specVersion;
 	uart0_printf("EMMC: vendor %x, sdversion %x, slot_status %x\n", vendor, sdversion, slot_status);
-	hci_ver = sdversion;
-
-	if(hci_ver < 2)
-	{
-		uart0_printf("EMMC: WARNING: old SDHCI version detected\n");
-	}
 
 	// Reset the controller
 #ifdef EMMC_DEBUG

@@ -102,6 +102,7 @@ extern void PUT16(uint32_t addr, uint16_t val);
 /* uart0 */
 extern void uart0_init(void);
 extern void uart0_putc(int c);
+extern int uart0_getc(void);
 extern void uart0_print(const char *s);
 extern void print_binary(uint32_t n);
 

@@ -33,7 +33,8 @@
   (define (aux idx)
     (define end-pos (min (+ idx 4096) (bytes-length bs)))
     (cond
-      [(> (current-inexact-milliseconds) expire) (void)]
+      [(> (current-inexact-milliseconds) expire)
+       (error "Reading from port timed out")]
       [else (define len (read-bytes-avail! bs port idx end-pos))
             (cond
               [(string-contains? (bytes->string/latin-1 bs) exit-seq) (void)]
@@ -64,3 +65,8 @@
   (path->string
    (simplify-path
     (build-path tests-directory 'up "raspi2-qemu.img"))))
+
+(define raspi-kernel-path
+  (path->string
+   (simplify-path
+    (build-path tests-directory 'up "raspi-kernel.img"))))

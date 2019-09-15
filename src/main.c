@@ -4,12 +4,12 @@
 
 uint8_t buf[512];
 
+static void reboot(void);
+
 void c_entry(void)
 {
-	int i;
 	struct emmc_block_dev dev;
 	struct block_device *devptr = (struct block_device *) &dev;
-	wdog_start(0xFFFFF);
 	uart0_init();
 
 	sd_card_init(&devptr);
@@ -20,14 +20,19 @@ void c_entry(void)
 	uart0_printf("\n");
 
 	uart0_print("Bye!\r\n");
-	while(1)
-	{
-		unsigned int ra=wdog_get_remaining();
-		uart0_printf("ra: %d\n", ra);
-		if(ra<0xC2F6F) //4 seconds
-		{
-			uart0_printf("Wait for a reset\n");
-			break;
-		}
-	}
+
+	reboot();
+}
+
+
+static void reboot(void)
+{
+	const int PM_RSTC = 0x2010001c;
+	const int PM_WDOG = 0x20100024;
+	const int PM_PASSWORD = 0x5a000000;
+	const int PM_RSTC_WRCFG_FULL_RESET = 0x00000020;
+	
+	PUT32(PM_WDOG, PM_PASSWORD | 1); // timeout = 1/16th of a second? (whatever)
+	PUT32(PM_RSTC, PM_PASSWORD | PM_RSTC_WRCFG_FULL_RESET);
+	while(1);
 }

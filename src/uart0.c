@@ -60,6 +60,10 @@ void uart0_putc(int c) {
     PUT32(UART0_DR,c);
 }
 
+int uart0_getc(void) {
+	return GET32(UART0_DR);
+}
+
 void uart0_print(const char *s) {
 	while (*s) {
 		uart0_putc(*s);
